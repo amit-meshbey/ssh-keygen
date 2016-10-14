@@ -57,7 +57,7 @@ function ssh_keygen(location, opts, callback){
 	if(!opts.size) opts.size = '2048';
 
 	var keygen = spawn(binPath(), [
-		'-t','rsa',
+		'-t', opts.type,
 		'-b', opts.size,
 		'-C', opts.comment,
 		'-N', opts.password,
@@ -111,12 +111,13 @@ function ssh_keygen(location, opts, callback){
 };
 
 module.exports = function(opts, callback){
-	var location = opts.location;
-	if(!location) location = path.join(os.tmpDir(),'id_rsa');
-
 	if(_.isUndefined(opts.read)) opts.read = true;
 	if(_.isUndefined(opts.force)) opts.force = true;
 	if(_.isUndefined(opts.destroy)) opts.destroy = false;
+	if(_.isUndefined(opts.type)) opts.type = "rsa";
+
+	var location = opts.location;
+	if(!location) location = path.join(os.tmpDir(),'id_' + opts.type);
 
 	checkAvailability(location, opts.force, function(err){
 		if(err){
